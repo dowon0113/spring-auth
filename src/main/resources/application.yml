@@ -1,0 +1,11 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: springauth
+
+jwt:
+  secret: secret-key-here
+  expiration: 3600000 # 밀리초 기준 (1시간)
