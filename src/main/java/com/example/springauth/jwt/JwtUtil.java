@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -20,7 +22,9 @@ public class JwtUtil {
 
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String ROLE_CLAIM_KEY = "roles";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 2; // 2시간
+
+    @Value("${jwt.expiration}")
+    private long expirationTime;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -38,11 +42,11 @@ public class JwtUtil {
      */
     public String createToken(Long userId, Set<String> roles) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
+        Date expiry = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
                 .setSubject(userId.toString())
-                .claim(ROLE_CLAIM_KEY, roles)
+                .claim(ROLE_CLAIM_KEY, List.copyOf(roles)) //Set → List 변환
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -79,8 +83,18 @@ public class JwtUtil {
      */
     @SuppressWarnings("unchecked")
     public Set<String> getRoles(String token) {
-        return getClaims(token).get(ROLE_CLAIM_KEY, Set.class);
+        Object rawRoles = getClaims(token).get("roles");
+
+        log.debug("roles 원시 타입: {}", rawRoles.getClass());
+        log.debug("roles 값: {}", rawRoles);
+
+        if (rawRoles instanceof List<?> list) {
+            return list.stream().map(Object::toString).collect(Collectors.toSet());
+        }
+
+        throw new CustomException(GlobalExceptionCode.INVALID_TOKEN);
     }
+
 
     /**
      * Claims 추출
