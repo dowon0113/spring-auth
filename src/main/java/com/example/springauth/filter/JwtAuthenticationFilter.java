@@ -3,6 +3,7 @@ package com.example.springauth.filter;
 import com.example.springauth.common.exception.CustomException;
 import com.example.springauth.common.exception.GlobalExceptionCode;
 import com.example.springauth.jwt.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,14 +34,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        log.debug("authHeader = {}", authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.warn("Authorization 헤더가 없거나 잘못됨");
             filterChain.doFilter(request, response); // 다음 필터로 넘김 (익명 접근 허용된 경우)
             return;
         }
 
         try {
             String token = jwtUtil.stripBearerPrefix(authHeader);
+            log.debug("token = {}", token);
             jwtUtil.validateToken(token); // 서명 및 만료 검증
 
             Long userId = jwtUtil.getUserId(token);
@@ -53,8 +57,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(GlobalExceptionCode.INVALID_TOKEN);
         } catch (JwtException | IllegalArgumentException e) {
             throw new CustomException(GlobalExceptionCode.INVALID_TOKEN);
+        } catch (Exception e) {
+            log.error("알 수 없는 예외 발생: {}", e.getMessage(), e);
+            throw new CustomException(GlobalExceptionCode.INTERNAL_ERROR);
         }
 
         filterChain.doFilter(request, response);
