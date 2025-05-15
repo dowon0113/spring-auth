@@ -1,0 +1,23 @@
+### 1. 회원가입
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{
+  "username": "JIN HO",
+  "password": "12341234",
+  "nickname": "Mentos"
+}
+
+### 2. 로그인
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "JIN HO",
+  "password": "12341234"
+}
+
+### 3. 관리자 권한 부여
+PATCH http://localhost:8080/admin/users/{userId}/roles
+Authorization: Bearer token
+Content-Type: application/json
