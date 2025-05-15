@@ -7,5 +7,5 @@ spring:
     name: springauth
 
 jwt:
-  secret: secret-key-here
+  secret: zLk0J8ABMzIbiNLKf4N6OKiOE6rmM7Evzq6U7WwnCMc=
   expiration: 3600000 # 밀리초 기준 (1시간)

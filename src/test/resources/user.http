@@ -1,5 +1,5 @@
 ### 1. 회원가입
-POST http://localhost:8080/signup
+POST http://localhost:8080/v1/auth/signup
 Content-Type: application/json
 
 {
@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### 2. 로그인
-POST http://localhost:8080/login
+POST http://localhost:8080/v1/auth/login
 Content-Type: application/json
 
 {
@@ -18,6 +18,6 @@ Content-Type: application/json
 }
 
 ### 3. 관리자 권한 부여
-PATCH http://localhost:8080/admin/users/{userId}/roles
-Authorization: Bearer token
+PATCH http://localhost:8080/v1/users/8865620366019808792/roles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4ODY1NjIwMzY2MDE5ODA4NzkyIiwicm9sZXMiOlsiTUFTVEVSIl0sImlhdCI6MTc0NzMyMTI4OCwiZXhwIjoxNzQ3MzI0ODg4fQ.fIDYmzXD0V6-HNns9qHouUQ1Yv5BcpZcb3bq-7h0KQM
 Content-Type: application/json
