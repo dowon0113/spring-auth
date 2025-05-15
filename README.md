@@ -1,5 +1,5 @@
 # **Spring Boot 기반 JWT 인증/인가**
-
+**목표**
 - **Spring Boot**를 이용하여 JWT 인증/인가 로직과 API를 구현합니다.
 - **Junit** 기반의 테스트 코드를 작성합니다.
 - **Swagger** 로 API를 문서화합니다.
