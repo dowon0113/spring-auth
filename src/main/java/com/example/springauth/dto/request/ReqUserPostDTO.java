@@ -27,12 +27,7 @@ public class ReqUserPostDTO {
     @NotNull(message = "닉네임을 입력해주세요.")
     private String nickname;
 
-    public UserEntity toEntity() {
-        return UserEntity.builder()
-                .username(username)
-                .password(password)
-                .nickname(nickname)
-                .roleType(RoleType.USER)
-                .build();
+    public UserEntity toEntity(Long id) {
+        return UserEntity.create(id, username, password, nickname);
     }
 }
