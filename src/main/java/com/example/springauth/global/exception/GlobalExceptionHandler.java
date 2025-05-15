@@ -18,8 +18,10 @@ public class GlobalExceptionHandler {
         ResDTO<Void> body = ResDTO.<Void>builder()
                 .error(new ResDTO.ErrorDetail(code.getCode(), code.getMessage()))
                 .build();
-        return ResponseEntity.badRequest().body(body);
+        return ResponseEntity.status(code.getStatus()) // <- 400 말고 여기를 동적으로!
+                .body(body);
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResDTO<Void>> handleUnknown(Exception e) {
