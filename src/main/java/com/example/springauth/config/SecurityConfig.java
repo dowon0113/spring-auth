@@ -31,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/signup").permitAll() // 회원가입은 인증 없이
                         .requestMatchers("/login").permitAll() // 로그인도 인증 없이
                         .requestMatchers(HttpMethod.GET, "/docs/**", "/swagger-ui/**").permitAll() // Swagger 문서
+                        .requestMatchers("/admin/**").hasAuthority("MASTER")
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
