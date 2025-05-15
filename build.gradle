@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.epages.restdocs-api-spec' version "0.19.2"
 }
 
 group = 'com.example'
@@ -20,9 +21,6 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
@@ -31,20 +29,68 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-	// 롬복
+	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mockito:mockito-core'
-	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Swagger (UI & 자동 문서)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+	// Spring RestDocs (기초 REST 문서 자동화)
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+	// epages (RestDocs + OpenAPI 3 연결 자동화 도구)
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.2'
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+openapi3 {
+	servers = [
+			{
+				url = 'http://localhost:8080'
+			}
+	]
+	title = 'springauth API'
+	description = ''
+	version = '1.0.0'
+	format = 'json'
+}
+
+tasks.register('setDocs') {
+	dependsOn 'openapi3'
+	doLast {
+		copy {
+			from "build/api-spec"
+			include "*.json"
+			include "*.yaml"
+			into "build/resources/main/static/springdoc"
+			rename { String fileName ->
+				if (fileName == 'openapi3.json') {
+					return 'springauth.json'
+				} else if (fileName == 'openapi3.yaml') {
+					return 'springauth.yml'
+				}
+				return fileName
+			}
+		}
+	}
+}
+
+bootRun {
+	dependsOn 'setDocs'
+}
+
+bootJar {
+	dependsOn 'setDocs'
 }
