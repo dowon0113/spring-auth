@@ -4,14 +4,15 @@ import com.example.springauth.dto.request.ReqLoginDTO;
 import com.example.springauth.dto.request.ReqUserPostDTO;
 import com.example.springauth.dto.response.ResLoginDTO;
 import com.example.springauth.dto.response.ResUserPostDTO;
+import com.example.springauth.dto.response.ResUserRolePatchDTO;
 import com.example.springauth.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -32,6 +33,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
-
+    @PatchMapping("/admin/users/{userId}/roles")
+    @PreAuthorize("hasAuthority('AMDIN')")
+    public ResponseEntity<ResUserRolePatchDTO> grantAdminRole(
+            @PathVariable Long userId){
+        ResUserRolePatchDTO response = userService.grantAdminRole(userId);
+        return ResponseEntity.ok(response);
+    }
 }
