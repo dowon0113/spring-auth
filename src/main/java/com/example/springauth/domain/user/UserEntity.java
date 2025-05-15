@@ -32,4 +32,8 @@ public class UserEntity {
                 .roleType(RoleType.USER)
                 .build();
     }
+
+    public void updateRole(RoleType newRole) {
+        this.roleType = newRole;
+    }
 }
