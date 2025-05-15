@@ -15,4 +15,10 @@ public class ResDTO<T> {
         private String code;
         private String message;
     }
+
+    public static ResDTO<?> error(String code, String message) {
+        return ResDTO.builder()
+                .error(new ErrorDetail(code, message))
+                .build();
+    }
 }
