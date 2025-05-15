@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @PatchMapping("/admin/users/{userId}/roles")
-    @PreAuthorize("hasAuthority('AMDIN')")
+    @PreAuthorize("hasAuthority('MASTER')")
     public ResponseEntity<ResUserRolePatchDTO> grantAdminRole(
             @PathVariable Long userId){
         ResUserRolePatchDTO response = userService.grantAdminRole(userId);
